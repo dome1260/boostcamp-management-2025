@@ -1,4 +1,7 @@
 <script setup>
+import UserCreate from './components/UserCreate.vue';
+import UserEdit from './components/UserEdit.vue';
+
 const headers = [
   {
     title: 'Name',
@@ -11,6 +14,10 @@ const headers = [
   {
     title: 'E-mail',
     value: 'email'
+  },
+  {
+    title: '',
+    value: 'actions'
   }
 ]
 
@@ -44,7 +51,11 @@ const items = [
 
 <template>
   <v-container>
-    <h1> User Page </h1>
+    <div class="d-flex align-center gap-2">
+      <h1> User Page </h1>
+      <v-spacer />
+      <UserCreate />
+    </div>
     <v-data-table
       :headers="headers"
       :items="items">
@@ -53,6 +64,19 @@ const items = [
       </template>
       <template #[`item.age`]="{ item }">
         {{ item.age }} year
+      </template>
+
+      <template #[`item.actions`]="{ item}">
+        <div class="d-flex ga-4">
+          <UserEdit />
+          <v-btn
+            color="red"
+            variant="flat"
+            size="32"
+            icon>
+            <v-icon> mdi-trash-can-outline </v-icon>
+          </v-btn>
+        </div>
       </template>
     </v-data-table>
   </v-container>

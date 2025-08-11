@@ -1,10 +1,9 @@
 <script setup>
-// import MyCard from '../components/MyCard.vue';
 </script>
 
 <template>
   <div>
-    Home Page
+    <RouterView />
   </div>
 </template>
 

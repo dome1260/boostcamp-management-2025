@@ -5,9 +5,22 @@ const routes = [
     path: '/',
     name: 'HomePage',
     component: () => import('../pages/Home.vue'),
-    meta: {
-      layout: 'blank'
-    }
+    redirect: { name: 'UserPage' }
+  },
+  {
+    path: '/auth',
+    name: 'AuthPage',
+    component: () => import('../pages/auth/Auth.vue'),
+    children: [
+      {
+        path: 'login',
+        name: 'LoginPage',
+        component: () => import('../pages/auth/pages/Login.vue'),
+        meta: {
+          layout: 'blank'
+        }
+      }
+    ]
   },
   {
     path: '/user',
