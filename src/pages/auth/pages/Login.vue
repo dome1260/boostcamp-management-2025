@@ -1,10 +1,29 @@
 <script setup>
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { useAuthStore } from '../../../stores/auth';
 
 const router = useRouter()
+const authStore = useAuthStore()
 
-const handleLogin = () => {
-  router.push({ name: 'UserPage' });
+const loading = ref(false)
+const form = reactive({
+  username: '',
+  password: ''
+})
+
+const handleLogin = async () => {
+  loading.value = true
+  try {
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, form)
+    authStore.setUser(response.data.data)
+    router.push({ name: 'UserPage' })
+  } catch (error) {
+    console.error('[ERROR] login - handle login :', error?.message || error)
+  } finally {
+    loading.value = false
+  }
 }
 
 </script>
@@ -23,6 +42,7 @@ const handleLogin = () => {
             class="py-1">
             <label for="login-username"> Username </label>
             <v-text-field
+              v-model="form.username"
               id="login-username"
               density="compact"
               variant="outlined" />
@@ -32,6 +52,7 @@ const handleLogin = () => {
             class="py-1">
             <label for="login-password"> Password </label>
             <v-text-field
+              v-model="form.password"
               id="login-password"
               type="password"
               density="compact"
@@ -39,6 +60,7 @@ const handleLogin = () => {
           </v-col>
         </v-row>
         <v-btn
+          :loading="loading"
           type="submit"
           variant="flat"
           color="primary"
