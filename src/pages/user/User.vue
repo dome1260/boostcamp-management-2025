@@ -5,6 +5,8 @@ import UserEdit from './components/UserEdit.vue';
 import axios from 'axios';
 import { useAuthStore } from '../../stores/auth';
 
+import ConsentDelete from '../../components/ConsentDelete.vue'
+
 const authStore = useAuthStore()
 
 const headers = [
@@ -52,6 +54,26 @@ const getUserByPaginate = async () => {
   }
 }
 
+const deleteUser = async (id) => {
+  loading.value = true
+  try {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${userAccessToken.value}`
+      }
+    })
+    getUserByPaginate()
+  } catch (error) {
+    console.error('[ERROR] user - delete user', error?.message || error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleChangePage = () => {
+  getUserByPaginate()
+}
+
 onMounted(() => {
   getUserByPaginate()
 })
@@ -62,7 +84,7 @@ onMounted(() => {
     <div class="d-flex align-center gap-2">
       <h1> User Page </h1>
       <v-spacer />
-      <UserCreate />
+      <UserCreate @refetch="getUserByPaginate()" />
     </div>
     <v-data-table
       :loading="loading"
@@ -72,16 +94,12 @@ onMounted(() => {
       <template #[`item.fullName`]="{ item }">
         {{ item.firstName }} {{ item.lastName }}
       </template>
-      <template #[`item.actions`]="{ item}">
-        <div class="d-flex ga-4">
-          <UserEdit />
-          <v-btn
-            color="red"
-            variant="flat"
-            size="32"
-            icon>
-            <v-icon> mdi-trash-can-outline </v-icon>
-          </v-btn>
+      <template #[`item.actions`]="{ item }">
+        <div class="d-flex ga-2">
+          <UserEdit
+            :id="item._id"
+            @refetch="getUserByPaginate()" />
+          <ConsentDelete @confirm="deleteUser(item._id)" />
         </div>
       </template>
       <template #bottom>
@@ -89,7 +107,8 @@ onMounted(() => {
           <v-pagination
             v-model="filter.page"
             :length="filter.totalPages"
-            :total-visible="5" />
+            :total-visible="5"
+            @update:model-value="handleChangePage" />
         </div>
       </template>
     </v-data-table>
