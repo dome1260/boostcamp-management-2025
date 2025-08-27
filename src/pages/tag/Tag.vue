@@ -1,9 +1,9 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue';
-import UserCreate from './components/UserCreate.vue';
-import UserEdit from './components/UserEdit.vue';
-import axios from 'axios';
+import TagCreate from './components/TagCreate.vue';
+import TagEdit from './components/TagEdit.vue';
 import { useAuthStore } from '../../stores/auth';
+import axios from 'axios';
 
 import ConsentDelete from '../../components/ConsentDelete.vue'
 
@@ -12,15 +12,11 @@ const authStore = useAuthStore()
 const headers = [
   {
     title: 'Name',
-    value: 'fullName'
+    value: 'name'
   },
   {
-    title: 'E-mail',
-    value: 'email'
-  },
-  {
-    title: 'Role',
-    value: 'role'
+    title: 'Status',
+    value: 'status'
   },
   {
     title: '',
@@ -37,10 +33,10 @@ const filter = reactive({
 
 const userAccessToken = computed(() => authStore.userAccessToken)
 
-const getUserByPaginate = async () => {
+const getTagByPaginate = async () => {
   loading.value = true
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/users`, {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/tags`, {
       headers: {
         Authorization: `Bearer ${userAccessToken.value}`
       }
@@ -48,58 +44,55 @@ const getUserByPaginate = async () => {
     items.value = response.data.data.docs
     filter.totalPages = response.data.data.totalPages
   } catch (error) {
-    console.error('[ERROR] user - get user by paginate', error?.message || error)
+    console.error('[ERROR] tag - get tag by paginate', error?.message || error)
   } finally {
     loading.value = false
   }
 }
 
-const deleteUser = async (id) => {
+const deleteTag = async (id) => {
   loading.value = true
   try {
-    await axios.delete(`${import.meta.env.VITE_API_URL}/users/${id}`, {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/tags/${id}`, {
       headers: {
         Authorization: `Bearer ${userAccessToken.value}`
       }
     })
-    getUserByPaginate()
+    getTagByPaginate()
   } catch (error) {
-    console.error('[ERROR] user - delete user', error?.message || error)
+    console.error('[ERROR] tag - delete tag', error?.message || error)
   } finally {
     loading.value = false
   }
 }
 
 const handleChangePage = () => {
-  getUserByPaginate()
+  getTagByPaginate()
 }
 
 onMounted(() => {
-  getUserByPaginate()
+  getTagByPaginate()
 })
 </script>
 
 <template>
   <v-container>
     <div class="d-flex align-center gap-2">
-      <h1> User </h1>
+      <h1> Tag </h1>
       <v-spacer />
-      <UserCreate @refetch="getUserByPaginate()" />
+      <TagCreate @refetch="getTagByPaginate()" />
     </div>
     <v-data-table
       :loading="loading"
       :headers="headers"
       :items="items"
       :items-per-page="-1">
-      <template #[`item.fullName`]="{ item }">
-        {{ item.firstName }} {{ item.lastName }}
-      </template>
       <template #[`item.actions`]="{ item }">
         <div class="d-flex ga-2">
-          <UserEdit
+          <TagEdit
             :id="item._id"
-            @refetch="getUserByPaginate()" />
-          <ConsentDelete @confirm="deleteUser(item._id)" />
+            @refetch="getTagByPaginate()" />
+          <ConsentDelete @confirm="deleteTag(item._id)" />
         </div>
       </template>
       <template #bottom>

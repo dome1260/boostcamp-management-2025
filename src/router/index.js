@@ -25,12 +25,50 @@ const routes = [
     ]
   },
   {
+    path: '/product',
+    name: 'ProductPage',
+    component: () => import('../pages/product/Product.vue'),
+    children: [
+      {
+        path: '/product',
+        name: 'ProductList',
+        component: () => import('../pages/product/pages/ProductList.vue'),
+        meta: {
+          auth: true,
+          layout: 'default',
+          root: 'ProductPage'
+        }
+      }
+    ]
+  },
+  {
+    path: '/category',
+    name: 'CategoryPage',
+    component: () => import('../pages/category/Category.vue'),
+    meta: {
+      auth: true,
+      layout: 'default',
+      root: 'CategoryPage'
+    }
+  },
+  {
+    path: '/tag',
+    name: 'TagPage',
+    component: () => import('../pages/tag/Tag.vue'),
+    meta: {
+      auth: true,
+      layout: 'default',
+      root: 'TagPage'
+    }
+  },
+  {
     path: '/user',
     name: 'UserPage',
     component: () => import('../pages/user/User.vue'),
     meta: {
       auth: true,
-      layout: 'default'
+      layout: 'default',
+      root: 'UserPage'
     }
   }
 ]
