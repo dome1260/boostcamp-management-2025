@@ -30,9 +30,39 @@ const routes = [
     component: () => import('../pages/product/Product.vue'),
     children: [
       {
-        path: '/product',
+        path: '',
         name: 'ProductList',
         component: () => import('../pages/product/pages/ProductList.vue'),
+        meta: {
+          auth: true,
+          layout: 'default',
+          root: 'ProductPage'
+        }
+      },
+      {
+        path: 'create',
+        name: 'ProductCreate',
+        component: () => import('../pages/product/pages/ProductCreate.vue'),
+        meta: {
+          auth: true,
+          layout: 'default',
+          root: 'ProductPage'
+        }
+      },
+      {
+        path: ':id/detail',
+        name: 'ProductDetail',
+        component: () => import('../pages/product/pages/ProductDetail.vue'),
+        meta: {
+          auth: true,
+          layout: 'default',
+          root: 'ProductPage'
+        }
+      },
+      {
+        path: ':id/edit',
+        name: 'ProductEdit',
+        component: () => import('../pages/product/pages/ProductEdit.vue'),
         meta: {
           auth: true,
           layout: 'default',

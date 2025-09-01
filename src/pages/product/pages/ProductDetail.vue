@@ -1,0 +1,109 @@
+<script setup>
+import { computed, onMounted, ref } from 'vue';
+import { useAuthStore } from '../../../stores/auth';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
+
+import ConsentDelete from '../../../components/ConsentDelete.vue'
+
+const route = useRoute()
+const authStore = useAuthStore()
+
+const loading = ref(false)
+const productInfo = ref({
+  name: '',
+  price: 0,
+  category: null,
+  tags: [],
+  status: ''
+})
+
+const userAccessToken = computed(() => authStore.userAccessToken)
+
+const getProductById = async () => {
+  loading.value = true
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/products/${route.params.id}`, {
+      headers: {
+        Authorization: `Bearer ${userAccessToken.value}`
+      }
+    })
+    productInfo.value = response.data.data
+  } catch (error) {
+    console.error('[ERROR] product - get product by id :', error?.message || error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const deleteProduct = () => {
+  //
+}
+
+onMounted(() => {
+  getProductById()
+})
+
+</script>
+
+<template>
+  <v-container class="pa-4">
+    <div class="d-flex justify-end ga-2 mb-4">
+      <v-btn
+        :to="{ name: 'ProductEdit', params: { id: route.params.id } }"
+        variant="flat"
+        color="warning">
+        <v-icon start> mdi-square-edit-outline </v-icon>
+        Edit Product
+      </v-btn>
+      <ConsentDelete @confirm="deleteProduct()">
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            variant="flat"
+            color="red">
+            Delete
+          </v-btn>
+        </template>
+      </ConsentDelete>
+    </div>
+    <v-card
+      :loading="loading"
+      variant="outlined"
+      class="pa-4">
+        <v-row>
+        <v-col cols="12">
+          Status: {{ productInfo.status }}
+        </v-col>
+        <v-col cols="12">
+          Name: {{ productInfo.name }}
+        </v-col>
+        <v-col cols="12">
+          Price: {{ 
+            productInfo.price.toLocaleString(undefined, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }) 
+          }}
+        </v-col>
+        <v-col cols="12">
+          Category: {{ productInfo.category ? productInfo.category.name : '' }}
+        </v-col>
+        <v-col cols="12">
+          <div class="d-flex flex-wrap ga-2">
+            Tag:
+            <v-chip
+              v-for="(tag, i) in productInfo.tags"
+              :key="i"
+              color="primary">
+              {{ tag.name }}
+            </v-chip>
+          </div>
+        </v-col>
+      </v-row>
+    </v-card>
+  </v-container>
+</template>
+
+<style scoped>
+</style>

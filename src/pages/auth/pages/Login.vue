@@ -1,11 +1,13 @@
 <script setup>
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useAuthStore } from '../../../stores/auth';
+import { useNotificationStore } from '../../../stores/notification';
 
 const router = useRouter()
 const authStore = useAuthStore()
+const notificationStore = useNotificationStore()
 
 const loading = ref(false)
 const form = reactive({
@@ -21,11 +23,11 @@ const handleLogin = async () => {
     router.push({ name: 'UserPage' })
   } catch (error) {
     console.error('[ERROR] login - handle login :', error?.message || error)
+    notificationStore.showMessage(error?.message || error, 'error')
   } finally {
     loading.value = false
   }
 }
-
 </script>
 
 <template>
