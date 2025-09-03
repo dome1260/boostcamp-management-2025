@@ -1,12 +1,13 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { useAuthStore } from '../../../stores/auth';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 import ConsentDelete from '../../../components/ConsentDelete.vue'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 
 const loading = ref(false)
@@ -36,8 +37,20 @@ const getProductById = async () => {
   }
 }
 
-const deleteProduct = () => {
-  //
+const deleteProduct = async () => {
+  loading.value = true
+  try {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/products/${route.params.id}`, {
+      headers: {
+        Authorization: `Bearer ${userAccessToken.value}`
+      }
+    })
+    router.back()
+  } catch (error) {
+    console.error('[ERROR] product - get product by id :', error?.message || error)
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {
@@ -51,6 +64,7 @@ onMounted(() => {
     <div class="d-flex justify-end ga-2 mb-4">
       <v-btn
         :to="{ name: 'ProductEdit', params: { id: route.params.id } }"
+        :disabled="loading"
         variant="flat"
         color="warning">
         <v-icon start> mdi-square-edit-outline </v-icon>
@@ -60,6 +74,7 @@ onMounted(() => {
         <template #activator="{ props }">
           <v-btn
             v-bind="props"
+            :disabled="loading"
             variant="flat"
             color="red">
             Delete
