@@ -14,7 +14,8 @@ const { notification  } = storeToRefs(notificationStore)
     :timeout="3000"
     :rounded="8"
     variant="elevated"
-    location="top center">
+    location="top center"
+    target="body">
     {{ notification.message }}
   </v-snackbar>
 </template>

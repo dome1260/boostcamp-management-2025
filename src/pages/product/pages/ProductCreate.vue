@@ -61,7 +61,7 @@ const createProduct = async () => {
       {
         name: form.name,
         price: Number(form.price),
-        tag: form.tags,
+        tags: form.tags,
         category: form.category
       },
       {

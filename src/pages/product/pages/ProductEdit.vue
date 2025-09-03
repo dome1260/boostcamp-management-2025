@@ -1,9 +1,135 @@
 <script setup>
+import { computed, onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from '../../../stores/auth';
+import { useNotificationStore } from '../../../stores/notification';
+import axios from 'axios';
+
+import ProductForm from '../components/ProductForm.vue';
+
+const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
+const notificationStore = useNotificationStore()
+
+const loading = ref(false)
+const form = reactive({
+  name: '',
+  price: null,
+  category: '',
+  tags: []
+})
+// const formImage = reactive({
+//   src: '',
+//   file: null
+// })
+const tags = ref([])
+const categories = ref([])
+
+const userAccessToken = computed(() => authStore.userAccessToken)
+
+const getTagByPaginate = async () => {
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/tags?page=1&limit=999`, {
+      headers: {
+        Authorization: `Bearer ${userAccessToken.value}`
+      }
+    })
+    tags.value = response.data.data.docs
+  } catch (error) {
+    console.error('[ERROR] product - get tag by paginate', error?.message || error)
+  }
+}
+
+const getCategoryByPaginate = async () => {
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories?page=1&limit=999`, {
+      headers: {
+        Authorization: `Bearer ${userAccessToken.value}`
+      }
+    })
+    categories.value = response.data.data.docs
+  } catch (error) {
+    console.error('[ERROR] product - get category by paginate', error?.message || error)
+  }
+}
+
+const getProductById = async () => {
+  loading.value = true
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/products/${route.params.id}`, {
+      headers: {
+        Authorization: `Bearer ${userAccessToken.value}`
+      }
+    })
+    form.name = response.data.data.name
+    form.price =  response.data.data.price
+    form.category = response.data.data.category?._id || ''
+    form.tags = response.data.data.tags.length
+      ? response.data.data.tags.map(tag => tag._id)
+      : []
+  } catch (error) {
+    console.error('[ERROR] product - get product by id', error?.message || error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const updateProduct = async () => {
+  loading.value = true
+  try {
+    await axios.put(
+      `${import.meta.env.VITE_API_URL}/products/${route.params.id}`,
+      {
+        name: form.name,
+        price: Number(form.price),
+        tags: form.tags,
+        category: form.category
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userAccessToken.value}`
+        }
+      }
+    )
+    notificationStore.showMessage('Update product successfully')
+    router.back()
+  } catch (error) {
+    console.error('[ERROR] product - update product :', error?.message || error)
+    notificationStore.showMessage(error?.message || error, 'error')
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  getTagByPaginate()
+  getCategoryByPaginate()
+  getProductById()
+})
 </script>
 
 <template>
   <v-container>
-    Product Edit
+    <div class="d-flex align-center ga-2 mb-4">
+      <v-btn
+        variant="text"
+        @click="router.back()">
+        <v-icon start> mdi-chevron-left </v-icon>
+        Back
+      </v-btn>
+    </div>
+    <v-card
+      :loading="loading"
+      variant="outlined"
+      class="pa-4">
+      <ProductForm
+        :form="form"
+        :categories="categories"
+        :tags="tags"
+        @submit="updateProduct()"
+        @cancel="router.back()" />
+    </v-card>
   </v-container>
 </template>
 
