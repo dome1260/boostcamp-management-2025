@@ -6,12 +6,12 @@ import Snackbar from '../components/Snackbar.vue';
 
 <template>
   <v-app>
+    <Snackbar />
     <NavigationDrawer />
     <Navbar />
     <v-main>
       <RouterView />
     </v-main>
-    <Snackbar />
   </v-app>
 </template>
 
