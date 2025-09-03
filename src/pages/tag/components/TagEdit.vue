@@ -52,7 +52,7 @@ const updateTag = async () => {
 const getTagById = async () => {
   loading.value = true
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories/${props.id}`, {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/tags/${props.id}`, {
       headers: {
         Authorization: `Bearer ${userAccessToken.value}`
       }

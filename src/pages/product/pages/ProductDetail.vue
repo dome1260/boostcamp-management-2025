@@ -61,7 +61,14 @@ onMounted(() => {
 
 <template>
   <v-container class="pa-4">
-    <div class="d-flex justify-end ga-2 mb-4">
+    <div class="d-flex align-center ga-2 mb-4">
+      <v-btn
+        variant="text"
+        @click="router.back()">
+        <v-icon start> mdi-chevron-left </v-icon>
+        Back
+      </v-btn>
+      <v-spacer />
       <v-btn
         :to="{ name: 'ProductEdit', params: { id: route.params.id } }"
         :disabled="loading"

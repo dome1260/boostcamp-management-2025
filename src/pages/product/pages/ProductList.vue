@@ -10,7 +10,7 @@ const router = useRouter()
 const headers = [
   {
     title: 'Name',
-    value: 'name' // key
+    value: 'name'
   },
   {
     title: 'Price',
@@ -79,6 +79,13 @@ onMounted(() => {
       <h1> Product </h1>
       <v-spacer />
       <!-- <TagCreate @refetch="getProductByPaginate()" /> -->
+      <v-btn
+        :to="{ name: 'ProductCreate' }"
+        variant="flat"
+        color="primary">
+        <v-icon start> mdi-plus </v-icon>
+        Create Product
+      </v-btn>
     </div>
     <v-data-table
       :loading="loading"

@@ -28,7 +28,7 @@ const handleConfirm = () => {
           icon
           color="red"
           variant=flat
-          size="36">
+          size="32">
           <v-icon> mdi-trash-can-outline </v-icon>
         </v-btn>
       </slot>

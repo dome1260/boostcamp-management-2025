@@ -1,9 +1,112 @@
 <script setup>
+import { computed, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../../../stores/auth';
+import { useNotificationStore } from '../../../stores/notification';
+import axios from 'axios';
+
+import ProductForm from '../components/ProductForm.vue';
+
+const router = useRouter()
+const authStore = useAuthStore()
+const notificationStore = useNotificationStore()
+
+const loading = ref(false)
+const form = reactive({
+  name: '',
+  price: null,
+  category: '',
+  tags: []
+})
+// const formImage = reactive({
+//   src: '',
+//   file: null
+// })
+const tags = ref([])
+const categories = ref([])
+
+const userAccessToken = computed(() => authStore.userAccessToken)
+
+const getTagByPaginate = async () => {
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/tags?page=1&limit=999`, {
+      headers: {
+        Authorization: `Bearer ${userAccessToken.value}`
+      }
+    })
+    tags.value = response.data.data.docs
+  } catch (error) {
+    console.error('[ERROR] product - get tag by paginate', error?.message || error)
+  }
+}
+
+const getCategoryByPaginate = async () => {
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories?page=1&limit=999`, {
+      headers: {
+        Authorization: `Bearer ${userAccessToken.value}`
+      }
+    })
+    categories.value = response.data.data.docs
+  } catch (error) {
+    console.error('[ERROR] product - get category by paginate', error?.message || error)
+  }
+}
+
+const createProduct = async () => {
+  loading.value = true
+  try {
+    await axios.post(
+      `${import.meta.env.VITE_API_URL}/products`,
+      {
+        name: form.name,
+        price: Number(form.price),
+        tag: form.tags,
+        category: form.category
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userAccessToken.value}`
+        }
+      }
+    )
+    notificationStore.showMessage('Create product successfully')
+    router.back()
+  } catch (error) {
+    console.error('[ERROR] product - create product :', error?.message || error)
+    notificationStore.showMessage(error?.message || error, 'error')
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  getTagByPaginate()
+  getCategoryByPaginate()
+})
 </script>
 
 <template>
   <v-container>
-    Product Create
+    <div class="d-flex align-center ga-2 mb-4">
+      <v-btn
+        variant="text"
+        @click="router.back()">
+        <v-icon start> mdi-chevron-left </v-icon>
+        Back
+      </v-btn>
+    </div>
+    <v-card
+      :loading="loading"
+      variant="outlined"
+      class="pa-4">
+      <ProductForm
+        :form="form"
+        :categories="categories"
+        :tags="tags"
+        @submit="createProduct()"
+        @cancel="router.back()" />
+    </v-card>
   </v-container>
 </template>
 
