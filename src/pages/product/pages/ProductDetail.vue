@@ -12,6 +12,7 @@ const authStore = useAuthStore()
 
 const loading = ref(false)
 const productInfo = ref({
+  image: '',
   name: '',
   price: 0,
   category: null,
@@ -91,9 +92,16 @@ onMounted(() => {
     </div>
     <v-card
       :loading="loading"
-      variant="outlined"
+      variant="flat"
       class="pa-4">
-        <v-row>
+      <v-row>
+        <v-col
+          v-if="productInfo.image"
+          cols="12">
+          <img
+            :src="productInfo.image"
+            height="120">
+        </v-col>
         <v-col cols="12">
           Status: {{ productInfo.status }}
         </v-col>

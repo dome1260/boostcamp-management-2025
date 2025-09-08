@@ -18,10 +18,10 @@ const form = reactive({
   category: '',
   tags: []
 })
-// const formImage = reactive({
-//   src: '',
-//   file: null
-// })
+const formImage = reactive({
+  src: '',
+  file: null
+})
 const tags = ref([])
 const categories = ref([])
 
@@ -56,13 +56,25 @@ const getCategoryByPaginate = async () => {
 const createProduct = async () => {
   loading.value = true
   try {
+    let uploadedUrl = ''
+    if (formImage.file) {
+      const formData = new FormData()
+      formData.append('file', formImage.file)
+      const uploadedResponse = await axios.post(
+        `${import.meta.env.VITE_API_URL}/upload`,
+        formData
+      )
+      uploadedUrl = uploadedResponse.data.data.publicUrl
+    }
+
     await axios.post(
       `${import.meta.env.VITE_API_URL}/products`,
       {
         name: form.name,
         price: Number(form.price),
         tags: form.tags,
-        category: form.category
+        category: form.category,
+        image: uploadedUrl
       },
       {
         headers: {
@@ -100,10 +112,11 @@ onMounted(() => {
     </div>
     <v-card
       :loading="loading"
-      variant="outlined"
+      variant="flat"
       class="pa-4">
       <ProductForm
         :form="form"
+        :form-image="formImage"
         :categories="categories"
         :tags="tags"
         @submit="createProduct()"

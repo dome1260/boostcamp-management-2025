@@ -6,6 +6,10 @@ const props = defineProps({
     type: Object,
     required: true
   },
+  formImage: {
+    type: Object,
+    default: () => {}
+  },
   tags: {
     type: Array,
     default: () => []
@@ -35,6 +39,13 @@ const handelOnCancel = () => {
   emit('cancel')
 }
 
+const handleUpdateImage = () => {
+  if (props.formImage.file) {
+    props.formImage.src = URL.createObjectURL(props.formImage.file)
+  } else {
+    props.formImage.src = ''
+  }
+}
 </script>
 
 <template>
@@ -44,7 +55,30 @@ const handelOnCancel = () => {
     <v-row class="my-1">
       <v-col
         cols="12"
-        lg="6"
+        lg="10"
+        class="py-1">
+        <div class="mb-4">
+          <img
+            v-if="props.formImage.src"
+            :src="props.formImage.src"
+            height="120">
+          <div
+            v-else
+            style="width: fit-content; height: 120px;"
+            class="d-flex justify-center align-center pa-2 bg-grey rounded">
+            Upload Image
+          </div>
+        </div>
+        <v-file-input
+          v-model="formImage.file"
+          density="compact"
+          variant="outlined"
+          accept="image/jpeg, image/png, image/webp"
+          @update:model-value="handleUpdateImage()" />
+      </v-col>
+      <v-col
+        cols="12"
+        lg="5"
         class="py-1">
         <label for="product-name-input"> Name </label>
         <v-text-field
@@ -56,7 +90,7 @@ const handelOnCancel = () => {
       </v-col>
       <v-col
         cols="12"
-        lg="6"
+        lg="5"
         class="py-1">
         <label for="product-name-price"> Price </label>
         <v-text-field
@@ -70,7 +104,7 @@ const handelOnCancel = () => {
       </v-col>
       <v-col
         cols="12"
-        lg="6"
+        lg="5"
         class="py-1">
         <label for="product-name-category"> Category </label>
         <v-autocomplete
@@ -85,7 +119,7 @@ const handelOnCancel = () => {
       </v-col>
       <v-col
         cols="12"
-        lg="6"
+        lg="5"
         class="py-1">
         <label for="product-name-tags"> Tags </label>
         <v-autocomplete

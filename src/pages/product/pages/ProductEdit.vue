@@ -19,10 +19,10 @@ const form = reactive({
   category: '',
   tags: []
 })
-// const formImage = reactive({
-//   src: '',
-//   file: null
-// })
+const formImage = reactive({
+  src: '',
+  file: null
+})
 const tags = ref([])
 const categories = ref([])
 
@@ -68,6 +68,7 @@ const getProductById = async () => {
     form.tags = response.data.data.tags.length
       ? response.data.data.tags.map(tag => tag._id)
       : []
+    formImage.src = response.data.data.image || ''
   } catch (error) {
     console.error('[ERROR] product - get product by id', error?.message || error)
   } finally {
@@ -123,10 +124,11 @@ onMounted(() => {
     </div>
     <v-card
       :loading="loading"
-      variant="outlined"
+      variant="flat"
       class="pa-4">
       <ProductForm
         :form="form"
+        :form-image="formImage"
         :categories="categories"
         :tags="tags"
         @submit="updateProduct()"
