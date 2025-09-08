@@ -5,8 +5,7 @@ const routes = [
   {
     path: '/',
     name: 'HomePage',
-    component: () => import('../pages/Home.vue'),
-    redirect: { name: 'UserPage' }
+    component: () => import('../pages/Home.vue')
   },
   {
     path: '/auth',
@@ -174,6 +173,7 @@ router.beforeEach((to, from, next) => {
     if (authStore.userAccessToken && currentDate < authStore.userAuth.expiresIn) {
       return next()
     }
+    authStore.clearUser()
     return next({ name: 'LoginPage' })
   }
   if (!to.meta.auth && authStore.userAccessToken) {
