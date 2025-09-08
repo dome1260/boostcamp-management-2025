@@ -79,13 +79,25 @@ const getProductById = async () => {
 const updateProduct = async () => {
   loading.value = true
   try {
+    let uploadedUrl = ''
+    if (formImage.file) {
+      const formData = new FormData()
+      formData.append('file', formImage.file)
+      const uploadedResponse = await axios.post(
+        `${import.meta.env.VITE_API_URL}/upload`,
+        formData
+      )
+      uploadedUrl = uploadedResponse.data.data.publicUrl
+    }
+
     await axios.put(
       `${import.meta.env.VITE_API_URL}/products/${route.params.id}`,
       {
         name: form.name,
         price: Number(form.price),
         tags: form.tags,
-        category: form.category
+        category: form.category,
+        image: uploadedUrl
       },
       {
         headers: {
