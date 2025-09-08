@@ -1,7 +1,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { useAuthStore } from '../../../stores/auth';
 import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from '../../../stores/auth';
+import { useNotificationStore } from '../../../stores/notification';
 import axios from 'axios';
 
 import ConsentConfirm from '../../../components/ConsentConfirm.vue';
@@ -14,6 +15,7 @@ import ChangeStatusBtn from '../components/ChangeStatusBtn.vue';
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const notificationStore = useNotificationStore()
 
 const loading = ref(false)
 const orderInfo = ref({
@@ -46,6 +48,7 @@ const getOrderById = async () => {
     orderInfo.value = response.data.data
   } catch (error) {
     console.error('[ERROR] order - get order by id :', error?.message || error)
+    notificationStore.showMessage(error?.message || error, 'error')
   } finally {
     loading.value = false
   }
@@ -65,9 +68,11 @@ const UpdateOrderStatus = async (newStatus) => {
         }
       }
     )
+    notificationStore.showMessage('Update order status successfully', 'success')
     getOrderById()
   } catch (error) {
     console.error('[ERROR] order - update order status :', error?.message || error)
+    notificationStore.showMessage(error?.message || error, 'error')
   } finally {
     loading.value = false
   }
