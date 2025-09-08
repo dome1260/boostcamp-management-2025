@@ -8,7 +8,7 @@ const props = defineProps({
   },
   formImage: {
     type: Object,
-    default: () => {}
+    required: true
   },
   tags: {
     type: Array,

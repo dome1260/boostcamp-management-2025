@@ -33,6 +33,7 @@ const getProductById = async () => {
     productInfo.value = response.data.data
   } catch (error) {
     console.error('[ERROR] product - get product by id :', error?.message || error)
+    notificationStore.showMessage(error?.message || error, 'error')
   } finally {
     loading.value = false
   }
@@ -47,8 +48,12 @@ const deleteProduct = async () => {
       }
     })
     router.back()
+    setTimeout(() => {
+      notificationStore.showMessage('Delete product successfully')
+    }, 200)
   } catch (error) {
     console.error('[ERROR] product - delete product by id :', error?.message || error)
+    notificationStore.showMessage(error?.message || error, 'error')
   } finally {
     loading.value = false
   }
@@ -117,7 +122,7 @@ onMounted(() => {
           }}
         </v-col>
         <v-col cols="12">
-          Category: {{ productInfo.category ? productInfo.category.name : '' }}
+          Category: {{ productInfo.category ? productInfo.category.name : '-' }}
         </v-col>
         <v-col cols="12">
           <div class="d-flex flex-wrap ga-2">

@@ -1,13 +1,20 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue';
-import { useAuthStore } from '../../../stores/auth';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../../../stores/auth';
+import { useNotificationStore } from '../../../stores/notification';
 import axios from 'axios';
 
-const authStore = useAuthStore()
 const router = useRouter()
+const authStore = useAuthStore()
+const notificationStore = useNotificationStore()
 
 const headers = [
+  {
+    title: 'Image',
+    align: 'center',
+    value: 'image'
+  },
   {
     title: 'Name',
     value: 'name'
@@ -59,6 +66,7 @@ const getProductByPaginate = async () => {
     filter.totalPages = response.data.data.totalPages
   } catch (error) {
     console.error('[ERROR] product - get product by paginate', error?.message || error)
+    notificationStore.showMessage(error?.message || error, 'error')
   } finally {
     loading.value = false
   }
@@ -94,8 +102,16 @@ onMounted(() => {
       :headers="headers"
       :items="items"
       :items-per-page="-1"
-      @click:row="goToDetail"
-      disable-sort>
+      disable-sort
+      @click:row="goToDetail">
+      <template #[`item.image`]="{ item }">
+        <img
+          v-if="item.image"
+          :src="item.image"
+          class="rounded"
+          height="40">
+        <span v-else> - </span>
+      </template>
       <template #[`item.tags`]="{ item }">
         <div class="d-flex flex-wrap ga-2">
           <v-chip

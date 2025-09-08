@@ -37,6 +37,7 @@ const getTagByPaginate = async () => {
     tags.value = response.data.data.docs
   } catch (error) {
     console.error('[ERROR] product - get tag by paginate', error?.message || error)
+    notificationStore.showMessage(error?.message || error, 'error')
   }
 }
 
@@ -50,6 +51,7 @@ const getCategoryByPaginate = async () => {
     categories.value = response.data.data.docs
   } catch (error) {
     console.error('[ERROR] product - get category by paginate', error?.message || error)
+    notificationStore.showMessage(error?.message || error, 'error')
   }
 }
 
