@@ -70,8 +70,10 @@ const createProduct = async () => {
         }
       }
     )
-    notificationStore.showMessage('Create product successfully')
     router.back()
+    setTimeout(() => {
+      notificationStore.showMessage('Create product successfully')
+    }, 200)
   } catch (error) {
     console.error('[ERROR] product - create product :', error?.message || error)
     notificationStore.showMessage(error?.message || error, 'error')

@@ -4,10 +4,10 @@ import Snackbar from '../components/Snackbar.vue';
 
 <template>
   <v-app>
-    <Snackbar />
     <v-main>
       <RouterView />
     </v-main>
+    <Snackbar />
   </v-app>
 </template>
 

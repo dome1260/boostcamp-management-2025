@@ -3,31 +3,31 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { useAuthStore } from '../../../stores/auth';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import dayjs from 'dayjs'
 
 const authStore = useAuthStore()
 const router = useRouter()
 
 const headers = [
   {
-    title: 'Name',
-    value: 'name'
+    title: 'Order No.',
+    value: 'orderNo'
   },
   {
-    title: 'Category',
-    key: 'category',
-    value: (item) => {
-      return item.category.name
-    }
+    title: 'Created At',
+    key: 'createdAt',
+    value: (item) => dayjs(item.createdAt).format('DD/MM/YY HH:mm')
   },
   {
-    title: 'Tags',
-    value: 'tags',
+    title: 'Customer',
+    key: 'customer',
+    value: (item) => `${item.customer.firstName} ${item.customer.lastName}`
   },
   {
-    title: 'Price',
-    key: 'price',
+    title: 'Total Amount',
+    key: 'totalAmount',
     align: 'end',
-    value: (item) => item.price.toLocaleString(undefined, {
+    value: (item) => item.totalAmount.toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })
@@ -47,10 +47,10 @@ const filter = reactive({
 
 const userAccessToken = computed(() => authStore.userAccessToken)
 
-const getProductByPaginate = async () => {
+const getOrderByPaginate = async () => {
   loading.value = true
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/products`, {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/orders`, {
       headers: {
         Authorization: `Bearer ${userAccessToken.value}`
       }
@@ -58,36 +58,36 @@ const getProductByPaginate = async () => {
     items.value = response.data.data.docs
     filter.totalPages = response.data.data.totalPages
   } catch (error) {
-    console.error('[ERROR] product - get product by paginate', error?.message || error)
+    console.error('[ERROR] order - get order by paginate', error?.message || error)
   } finally {
     loading.value = false
   }
 }
 
 const handleChangePage = () => {
-  getProductByPaginate()
+  getOrderByPaginate()
 }
 
 const goToDetail = (_event, { item: { _id } }) => {
-  router.push({ name: 'ProductDetail', params: { id: _id } })
+  router.push({ name: 'OrderDetail', params: { id: _id } })
 }
 
 onMounted(() => {
-  getProductByPaginate()
+  getOrderByPaginate()
 })
 </script>
 
 <template>
   <v-container>
     <div class="d-flex align-center gap-2">
-      <h1> Product </h1>
+      <h1> Order </h1>
       <v-spacer />
       <v-btn
-        :to="{ name: 'ProductCreate' }"
+        :to="{ name: 'OrderCreate' }"
         variant="flat"
         color="primary">
         <v-icon start> mdi-plus </v-icon>
-        Create Product
+        Create Order
       </v-btn>
     </div>
     <v-data-table
@@ -97,16 +97,6 @@ onMounted(() => {
       :items-per-page="-1"
       @click:row="goToDetail"
       disable-sort>
-      <template #[`item.tags`]="{ item }">
-        <div class="d-flex flex-wrap ga-2">
-          <v-chip
-            v-for="(tag, i) in item.tags"
-            :key="i"
-            color="primary">
-            {{ tag.name }}
-          </v-chip>
-        </div>
-      </template>
       <template #bottom>
         <div class="d-flex justify-end">
           <v-pagination

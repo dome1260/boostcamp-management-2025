@@ -47,7 +47,7 @@ const deleteProduct = async () => {
     })
     router.back()
   } catch (error) {
-    console.error('[ERROR] product - get product by id :', error?.message || error)
+    console.error('[ERROR] product - delete product by id :', error?.message || error)
   } finally {
     loading.value = false
   }

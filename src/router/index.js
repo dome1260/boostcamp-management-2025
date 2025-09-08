@@ -25,6 +25,53 @@ const routes = [
     ]
   },
   {
+    path: '/order',
+    name: 'OrderPage',
+    component: () => import('../pages/order/Order.vue'),
+    children: [
+      {
+        path: '',
+        name: 'OrderList',
+        component: () => import('../pages/order/pages/OrderList.vue'),
+        meta: {
+          auth: true,
+          layout: 'default',
+          root: 'OrderPage'
+        }
+      },
+      {
+        path: 'create',
+        name: 'OrderCreate',
+        component: () => import('../pages/order/pages/OrderCreate.vue'),
+        meta: {
+          auth: true,
+          layout: 'default',
+          root: 'OrderPage'
+        }
+      },
+      {
+        path: ':id/detail',
+        name: 'OrderDetail',
+        component: () => import('../pages/order/pages/OrderDetail.vue'),
+        meta: {
+          auth: true,
+          layout: 'default',
+          root: 'OrderPage'
+        }
+      },
+      {
+        path: ':id/edit',
+        name: 'OrderEdit',
+        component: () => import('../pages/order/pages/OrderEdit.vue'),
+        meta: {
+          auth: true,
+          layout: 'default',
+          root: 'OrderPage'
+        }
+      }
+    ]
+  },
+  {
     path: '/product',
     name: 'ProductPage',
     component: () => import('../pages/product/Product.vue'),

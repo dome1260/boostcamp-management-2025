@@ -92,8 +92,10 @@ const updateProduct = async () => {
         }
       }
     )
-    notificationStore.showMessage('Update product successfully')
     router.back()
+    setTimeout(() => {
+      notificationStore.showMessage('Update product successfully')
+    }, 200)
   } catch (error) {
     console.error('[ERROR] product - update product :', error?.message || error)
     notificationStore.showMessage(error?.message || error, 'error')
