@@ -42,7 +42,7 @@ const handelOnCancel = () => {
     @submit.prevent="handelOnSubmit()">
     <OrderInfoForm
       :form="props.form"
-      edit-mode />
+      :edit-mode="props.editMode" />
     <CustomerInfoForm :form="props.form" />
     <ProductInfoForm
       :form="props.form"
