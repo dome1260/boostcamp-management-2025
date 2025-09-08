@@ -1,28 +1,42 @@
 <script setup>
 import { computed } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
 
-const authStore = useAuthStore()
+const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 const displayBreakpoint = useDisplay()
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['update:model-value'])
+
+const isMobile = computed(() => displayBreakpoint.mobile.value)
 
 const handelLogout = () => {
   authStore.clearUser()
   router.push({ name: 'LoginPage' })
 }
-
-const isMobile = computed(() => displayBreakpoint.mobile.value)
 </script>
 
 <template>
   <v-app-bar>
     <template #prepend>
-      <v-app-bar-nav-icon v-if="isMobile" />
+      <v-app-bar-nav-icon
+        v-if="isMobile"
+        @click="emit('update:model-value', true)" />
     </template>
     <v-container class="d-flex justify-space-between align-center ga-2">
-      <v-app-bar-title>  Navbar </v-app-bar-title>
+      <v-app-bar-title class="font-weight-bold">
+        {{ route.meta?.title || 'Title' }}
+      </v-app-bar-title>
       <v-menu width="150">
         <template #activator="{ props }">
           <v-btn

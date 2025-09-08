@@ -82,7 +82,6 @@ onMounted(() => {
 <template>
   <v-container>
     <div class="d-flex align-center gap-2">
-      <h1> User </h1>
       <v-spacer />
       <UserCreate @refetch="getUserByPaginate()" />
     </div>

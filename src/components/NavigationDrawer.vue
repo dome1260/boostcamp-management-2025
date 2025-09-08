@@ -3,6 +3,15 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute()
 
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['update:model-value'])
+
 const menus = [
   {
     title: 'Order',
@@ -44,7 +53,9 @@ const menus = [
 </script>
 
 <template>
-  <v-navigation-drawer>
+  <v-navigation-drawer
+    :model-value="props.modelValue"
+    @update:model-value="emit('update:model-value', $event)">
     <template
       v-for="(menu, i) in menus"
       :key="i">
