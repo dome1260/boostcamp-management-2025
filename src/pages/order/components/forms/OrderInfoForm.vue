@@ -3,6 +3,10 @@ const props = defineProps({
   form: {
     type: Object,
     required: true
+  },
+  editMode: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -23,6 +27,7 @@ const requiredRule = (v) => {
         <v-text-field
           id="order-no"
           v-model="props.form.orderNo"
+          :disabled="props.editMode"
           :rules="[requiredRule]"
           density="compact"
           variant="outlined" />

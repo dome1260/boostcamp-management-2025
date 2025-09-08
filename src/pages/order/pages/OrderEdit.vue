@@ -104,6 +104,7 @@ onMounted(() => {
       <OrderForm
         :form="form"
         :total-amount="totalAmount"
+        edit-mode
         @submit="updateOrder()"
         @cancel="router.back()" />
     </v-card>

@@ -13,6 +13,10 @@ const props = defineProps({
   totalAmount: {
     type: Number,
     default: 0
+  },
+  editMode: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -36,7 +40,9 @@ const handelOnCancel = () => {
   <v-form
     ref="orderFormRef"
     @submit.prevent="handelOnSubmit()">
-    <OrderInfoForm :form="props.form" />
+    <OrderInfoForm
+      :form="props.form"
+      edit-mode />
     <CustomerInfoForm :form="props.form" />
     <ProductInfoForm
       :form="props.form"
